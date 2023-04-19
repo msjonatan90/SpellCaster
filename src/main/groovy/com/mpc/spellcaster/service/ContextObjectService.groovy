@@ -1,7 +1,7 @@
 package com.mpc.spellcaster.service
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.mpc.spellcaster.Context
+import com.mpc.spellcaster.model.Context
 import org.springframework.stereotype.Service
 import redis.clients.jedis.Jedis
 

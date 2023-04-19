@@ -1,6 +1,6 @@
 package com.mpc.spellcaster.api
 
-import com.mpc.spellcaster.Context
+import com.mpc.spellcaster.model.Context
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.redis.core.RedisTemplate
 import org.springframework.expression.Expression

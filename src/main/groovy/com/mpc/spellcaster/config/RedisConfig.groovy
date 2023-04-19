@@ -1,6 +1,6 @@
 package com.mpc.spellcaster.config
 
-import com.mpc.spellcaster.Context
+import com.mpc.spellcaster.model.Context
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.data.redis.connection.RedisConnectionFactory

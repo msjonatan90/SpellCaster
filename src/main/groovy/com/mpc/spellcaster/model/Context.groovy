@@ -1,4 +1,4 @@
-package com.mpc.spellcaster
+package com.mpc.spellcaster.model
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
