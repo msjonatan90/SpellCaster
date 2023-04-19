@@ -1,28 +1,30 @@
 package com.mpc.spellcaster.service
 
+import com.mpc.spellcaster.error.ContextNotFoundException
 import com.mpc.spellcaster.model.Context
-import redis.clients.jedis.Jedis
-import com.fasterxml.jackson.databind.ObjectMapper
+import com.mpc.spellcaster.repository.ContextRepository
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.stereotype.Service
 
+@Service
 class RedisService {
-    Jedis jedis
-    ObjectMapper objectMapper
 
-    RedisService(String host, int port) {
-        jedis = new Jedis(host, port)
-        objectMapper = new ObjectMapper()
-    }
+    @Autowired
+    ContextRepository contextRepository
 
-    String storeContext(Context context) {
-        String key = UUID.randomUUID().toString()
-        String contextJson = objectMapper.writeValueAsString(context)
-        jedis.set(key, contextJson)
-        return key
+    void saveContext(Context context) {
+        contextRepository.save(context)
     }
 
     Context getContext(String key) {
-        String contextJson = jedis.get(key)
-        return objectMapper.readValue(contextJson, Context.class)
+        Optional<Context> optContext = contextRepository.findById(key)
+        if (optContext.isEmpty()) {
+            throw new ContextNotFoundException("Context not found for key: $key")
+        }
+        return optContext.get()
+    }
+
+    void deleteContext(String key) {
+        contextRepository.deleteById(key)
     }
 }
-

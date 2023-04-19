@@ -15,19 +15,19 @@ class ContextService {
     private Map<String, Context> cache = new ConcurrentHashMap<>()
 
     void put(String key, Context value) {
-        redisService.storeContext(value)
+        redisService.saveContext(key, value)
         cache.put(key, value)
     }
 
     Context get(String key) {
-        Context value = cache.get(key)
-        if (value == null) {
-            value = redisService.getContext(key)
-            if (value != null) {
-                cache.put(key, value)
+        Context context = cache.get(key)
+        if (context == null) {
+            context = redisService.getContext(key)
+            if (context != null) {
+                cache.put(key, context)
             }
         }
-        return value
+        return context
     }
 
     void delete(String key) {

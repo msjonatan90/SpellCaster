@@ -15,28 +15,36 @@ class SpellCasterController {
     @Autowired
     private SpellCasterService spellCasterService
 
-    @PostMapping("/{key}")
+    @PostMapping("/context")
+    String createContext(@RequestBody Context context) {
+        String key = UUID.randomUUID().toString()
+        context.id = key
+        contextService.put(key, context)
+        return key
+    }
+
+    @PutMapping("/context/{key}")
     String putContext(@PathVariable String key, @RequestBody Context value) {
         return contextService.put(key, value)
     }
 
-    @DeleteMapping("/{key}")
+    @DeleteMapping("/context/{key}")
     void deleteContext(@PathVariable String key) {
-        contextService.delete(key);
+        contextService.delete(key)
     }
 
-    @GetMapping("/{key}")
+    @GetMapping("/context/{key}")
     Object getContext(@PathVariable String key) {
         return contextService.get(key)
     }
 
-    @PostMapping("/validate")
+    @PostMapping("/expression/validate")
     boolean validateExpression(@RequestBody String expression) {
         // Validates the SpEL expression using the context object
         return spellCasterService.validate(expression)
     }
 
-    @PostMapping("/evaluate/{key}")
+    @PostMapping("/expression/evaluate/{key}")
     Object evaluateExpression(@RequestBody String expression, @PathVariable String key) {
         // Evaluate the SpEL expression using the context object
         return spellCasterService.evaluate(expression, contextService.get(key))

@@ -1,14 +1,9 @@
-package com.mpc.spellcaster.repository
+package com.mpc.spellcaster.repository;
 
 import com.mpc.spellcaster.model.Context
+import org.springframework.data.repository.CrudRepository
+import org.springframework.stereotype.Repository
 
-interface ContextRepository {
-
-    void save(Context context)
-
-    void update(Context context)
-
-    void delete(String id)
-
-    Context findById(String id)
+@Repository
+interface ContextRepository extends CrudRepository<Context, String> {
 }

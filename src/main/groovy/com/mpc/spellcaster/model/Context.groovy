@@ -1,9 +1,16 @@
 package com.mpc.spellcaster.model
 
-class Context {
-    Map<String, Object> properties
+import org.springframework.data.redis.core.RedisHash
 
-    Context(Map<String, Object> properties) {
+@RedisHash("context")
+class Context implements Serializable {
+
+    String id
+    HashMap<String, Object> properties
+
+    Context(String id, HashMap<String, Object> properties) {
+        this.id = id
         this.properties = properties
     }
 }
+
