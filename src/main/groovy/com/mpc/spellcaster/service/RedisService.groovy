@@ -1,5 +1,6 @@
 package com.mpc.spellcaster.service
 
+import com.mpc.spellcaster.model.Context
 import redis.clients.jedis.Jedis
 import com.fasterxml.jackson.databind.ObjectMapper
 
@@ -12,14 +13,16 @@ class RedisService {
         objectMapper = new ObjectMapper()
     }
 
-    void storeContext(Object context) {
+    String storeContext(Context context) {
         String key = UUID.randomUUID().toString()
         String contextJson = objectMapper.writeValueAsString(context)
         jedis.set(key, contextJson)
+        return key
     }
 
-    Object getContext(String key, Class<Object> contextClass) {
+    Context getContext(String key) {
         String contextJson = jedis.get(key)
-        return objectMapper.readValue(contextJson, contextClass)
+        return objectMapper.readValue(contextJson, Context.class)
     }
 }
+

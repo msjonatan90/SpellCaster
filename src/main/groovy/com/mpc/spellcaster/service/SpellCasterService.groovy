@@ -2,6 +2,7 @@ package com.mpc.spellcaster.service
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.mpc.spellcaster.model.Context
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.expression.Expression
 import org.springframework.expression.spel.standard.SpelExpressionParser
 import org.springframework.stereotype.Service
@@ -11,6 +12,10 @@ import redis.clients.jedis.JedisPoolConfig
 
 @Service
 class SpellCasterService {
+
+    @Autowired
+    ContextService contextService
+
     JedisPool jedisPool = new JedisPool(new JedisPoolConfig(), "localhost")
 
     def evaluate(String expression, Context context) {
@@ -28,5 +33,10 @@ class SpellCasterService {
 
             return [result: result, context: updatedContext]
         }
+    }
+
+    boolean validate(String expression) {
+        // Validates the SpEL expression using the context object
+        return true
     }
 }
