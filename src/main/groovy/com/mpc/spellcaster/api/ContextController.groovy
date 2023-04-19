@@ -1,5 +1,6 @@
 package com.mpc.spellcaster.api
 
+import com.mpc.spellcaster.model.Context
 import com.mpc.spellcaster.service.ContextService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.bind.annotation.DeleteMapping
@@ -17,8 +18,8 @@ class ContextController {
     private ContextService contextService
 
     @PostMapping("/{key}")
-    void putContext(@PathVariable String key, @RequestBody Object value) {
-        contextService.put(key, value)
+    String putContext(@PathVariable String key, @RequestBody Context value) {
+        return contextService.put(key, value)
     }
 
     @DeleteMapping("/{key}")
