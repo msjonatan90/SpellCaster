@@ -1,23 +1,9 @@
 package com.mpc.spellcaster.model
 
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.databind.annotation.JsonSerialize
-import groovy.transform.ToString
+class Context {
+    Map<String, Object> properties
 
-@ToString(includeNames=true, includePackage=false)
-@JsonSerialize
-class Context implements Serializable {
-
-    String id
-
-    Map<String, Object> contextMap = [:]
-    Map<String, Object> variables = [:]
-
-    String toJson() {
-        new ObjectMapper().writeValueAsString(contextMap)
-    }
-
-    static Context fromJson(String json) {
-        new ObjectMapper().readValue(json, Context.class)
+    Context(Map<String, Object> properties) {
+        this.properties = properties
     }
 }

@@ -12,7 +12,8 @@ class RedisService {
         objectMapper = new ObjectMapper()
     }
 
-    void storeContext(String key, Object context) {
+    void storeContext(Object context) {
+        String key = UUID.randomUUID().toString()
         String contextJson = objectMapper.writeValueAsString(context)
         jedis.set(key, contextJson)
     }
