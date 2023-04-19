@@ -7,6 +7,9 @@ import groovy.transform.ToString
 @ToString(includeNames=true, includePackage=false)
 @JsonSerialize
 class Context implements Serializable {
+
+    String id
+
     Map<String, Object> contextMap = [:]
     Map<String, Object> variables = [:]
 
