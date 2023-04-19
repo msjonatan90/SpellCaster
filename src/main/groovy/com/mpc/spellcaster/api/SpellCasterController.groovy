@@ -2,7 +2,6 @@ package com.mpc.spellcaster.api
 
 import com.mpc.spellcaster.model.Context
 import com.mpc.spellcaster.service.ContextService
-import com.mpc.spellcaster.service.RedisService
 import com.mpc.spellcaster.service.SpellCasterService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.bind.annotation.*
