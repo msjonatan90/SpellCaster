@@ -16,8 +16,8 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.codehaus.groovy:groovy'
+	implementation 'redis.clients:jedis:3.7.0'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-	implementation group: 'redis.clients', name: 'jedis', version: '3.6.0'
 }
 
 tasks.named('test') {
