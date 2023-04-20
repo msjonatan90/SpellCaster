@@ -20,6 +20,7 @@ class SpellCasterController {
     @Autowired
     private SpellCasterService spellCasterService
 
+
     @PostMapping("/context")
     String createContext(@RequestBody String context) {
         return contextService.create(context)
