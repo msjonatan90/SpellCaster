@@ -1,38 +1,65 @@
 package com.mpc.spellcaster.config
 
-import io.lettuce.core.resource.DefaultClientResources
-import org.springframework.beans.factory.annotation.Value
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import org.springframework.data.redis.connection.ReactiveRedisConnectionFactory
+import org.springframework.data.redis.connection.RedisConnectionFactory
 import org.springframework.data.redis.connection.RedisStandaloneConfiguration
-import org.springframework.data.redis.connection.lettuce.LettuceClientConfiguration
-import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory
-import org.springframework.data.redis.core.ReactiveRedisTemplate
-import org.springframework.data.redis.serializer.RedisSerializationContext
-import org.springframework.data.redis.serializer.RedisSerializer
+import org.springframework.data.redis.connection.jedis.JedisConnectionFactory
+import org.springframework.data.redis.core.RedisTemplate
+import org.springframework.data.redis.listener.RedisMessageListenerContainer
+import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer
 import org.springframework.data.redis.serializer.StringRedisSerializer
 
 @Configuration
 class RedisConfig {
 
-    @Bean
-    LettuceConnectionFactory lettuceConnectionFactory(RedisProperties redisProperties) {
-        return new LettuceConnectionFactory(redisProperties.getRedisHost(),
-                redisProperties.getRedisPort())
+    private final RedisProperties redisProperties
+
+    RedisConfig(RedisProperties redisProperties) {
+        this.redisProperties = redisProperties
     }
 
     @Bean
-    ReactiveRedisTemplate<String, String> reactiveRedisTemplate(ReactiveRedisConnectionFactory connectionFactory) {
-        RedisSerializer<String> serializer = new StringRedisSerializer();
-        RedisSerializationContext<String, String> serializationContext = RedisSerializationContext
-                .<String, String>newSerializationContext()
-                .key(serializer)
-                .value(serializer)
-                .hashKey(serializer)
-                .hashValue(serializer)
-                .build()
-
-        return new ReactiveRedisTemplate<>(connectionFactory, serializationContext)
+    RedisConnectionFactory redisConnectionFactory() {
+        return new JedisConnectionFactory(new RedisStandaloneConfiguration(
+                redisProperties.redisHost, redisProperties.redisPort
+        ))
     }
+
+    @Bean
+    RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory redisConnectionFactory) {
+        RedisTemplate<String, Object> template = new RedisTemplate<String, Object>()
+        template.setConnectionFactory(redisConnectionFactory)
+        template.setKeySerializer(new StringRedisSerializer())
+        template.setValueSerializer(new GenericJackson2JsonRedisSerializer())
+        template.afterPropertiesSet()
+        return template
+    }
+//
+//    @Bean
+//    RedisTemplate<String, Object> pubSubRedisTemplate(RedisConnectionFactory redisConnectionFactory) {
+//        RedisTemplate<String, Object> template = new RedisTemplate<String, Object>()
+//        template.setConnectionFactory(redisConnectionFactory)
+//        template.setDefaultSerializer(new StringRedisSerializer())
+//        template.setKeySerializer(new StringRedisSerializer())
+//        template.setValueSerializer(new StringRedisSerializer())
+//        template.afterPropertiesSet()
+//        return template
+//    }
+
+    @Bean
+    RedisMessageListenerContainer redisContainer(RedisConnectionFactory connectionFactory){
+
+        RedisMessageListenerContainer container = new RedisMessageListenerContainer()
+        container.setConnectionFactory(connectionFactory)
+//        container.addMessageListener(listenerAdapter,
+//                new ChannelTopic(redisProperties.redisMessageTopic))
+        return container
+    }
+//
+//    @Bean
+//    MessageListenerAdapter listenerAdapter(RedisTemplate<String, Object> redisTemplate) {
+//        return new MessageListenerAdapter(new ContextSubscriber(redisTemplate))
+//    }
 }

@@ -3,48 +3,49 @@ package com.mpc.spellcaster.api
 import com.mpc.spellcaster.service.ContextService
 import com.mpc.spellcaster.service.SpellCasterService
 import groovy.json.JsonOutput
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.expression.spel.support.StandardEvaluationContext
 import org.springframework.http.MediaType
 import org.springframework.http.codec.multipart.FilePart
 import org.springframework.web.bind.annotation.*
-import reactor.core.publisher.Flux
-import reactor.core.publisher.Mono
 
 @RestController
 class SpellCasterController {
 
-    @Autowired
-    private ContextService contextService
+    private final ContextService contextService
 
-    @Autowired
-    private SpellCasterService spellCasterService
+    private final SpellCasterService spellCasterService
 
-
-    @PostMapping("/context")
-    String createContext(@RequestBody String context) {
-        return contextService.create(context)
+    SpellCasterController(ContextService contextService,
+                          SpellCasterService spellCasterService) {
+        this.contextService = contextService
+        this.spellCasterService = spellCasterService
     }
 
-    @PostMapping(value = "/context/file", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    Mono<String> createContext(@RequestPart("context") FilePart context) {
-        return context.contentAsString.flatMap(redisTemplate.opsForValue()::set)
+    @PostMapping("/context/{appName}")
+    String createContext(@PathVariable String appName, @RequestBody String context) {
+        return contextService.create(appName, context)
     }
 
-    @PutMapping("/context/{key}")
-    void putContext(@PathVariable String key, @RequestBody String context) {
-        contextService.update(key, context)
+//    @PostMapping(value = "/context/file", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+//    String createContext(@RequestPart("context") FilePart context) {
+////        return context.contentAsString.flatMap(contextService.opsForValue()::set)
+//        return null;
+//    }
+
+    @PutMapping("/context/{appName}/{key}")
+    void putContext(@PathVariable String appName, @PathVariable String key, @RequestBody String context) {
+        contextService.update(appName, key, context)
     }
 
-    @DeleteMapping("/context/{key}")
-    void deleteContext(@PathVariable String key) {
-        contextService.delete(key)
+    @DeleteMapping("/context/{appName}/{key}")
+    void deleteContext(@PathVariable String appName, @PathVariable String key) {
+        contextService.delete(appName, key)
     }
 
-    @GetMapping("/context/{key}")
-    String getContext(@PathVariable String key) {
-        StandardEvaluationContext context = contextService.get(key)
-        return JsonOutput.toJson(context.getRootObject()?.getValue())
+    @GetMapping("/context/{appName}/{key}")
+    String getContext(@PathVariable String appName, @PathVariable String key) {
+        StandardEvaluationContext context = contextService.get(appName, key)
+        return JsonOutput.prettyPrint(JsonOutput.toJson(context.getRootObject()?.getValue()))
     }
 
     @PostMapping("/expression/validate")
@@ -53,10 +54,10 @@ class SpellCasterController {
         return spellCasterService.validate(expression)
     }
 
-    @PostMapping("/expression/evaluate/{key}")
-    Object evaluateExpression(@RequestBody String expression, @PathVariable String key) {
+    @PostMapping("/expression/evaluate/{appName}/{key}")
+    Object evaluateExpression(@PathVariable String appName, @PathVariable String key, @RequestBody String expression) {
         // Evaluate the SpEL expression using the context object
         return JsonOutput.prettyPrint(JsonOutput.toJson(
-                spellCasterService.evaluate(expression, contextService.get(key))))
+                spellCasterService.evaluate(expression, contextService.get(appName, key))))
     }
 }
