@@ -35,14 +35,16 @@ class ContextService {
     private final Map<String, StandardEvaluationContext> evaluationContext = new ConcurrentHashMap<>()
 
 
-    String create(Flux<String> contextStream) {
-        String contextKey = "evalContext_" + UUID.randomUUID().toString()
-        redisStreamHandler.handleStream(contextKey, contextStream, context -> {
-            // Create StandardEvaluationContext and perform necessary operations
-            evaluationContext.put(contextKey, new StandardEvaluationContext(context))
-        })
-        return contextKey
+    String create(String contextStream) {
+
+        String contextKey = "evaluationContext_" + UUID.randomUUID().toString()
+        // Create a key for the context in Redis
+        redisService.saveContext(contextKey, contextStream)
+        evaluationContext.put(contextKey, new StandardEvaluationContext(jsonSlurper.parseText(context)))
+        // Return a response immediately to the client
+        return Mono.just("Context streaming in progress. Context key: " + contextKey).block()
     }
+
 
 
     void update(String key, String context) {

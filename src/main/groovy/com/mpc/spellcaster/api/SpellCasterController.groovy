@@ -21,15 +21,14 @@ class SpellCasterController {
     private SpellCasterService spellCasterService
 
     @PostMapping("/context")
-    String createContext(@RequestBody Flux<String> contextStream) {
-        contextStream.subscribe (context -> { println "TEST: " + context})
-        return contextService.create(contextStream)
+    String createContext(@RequestBody String context) {
+        return contextService.create(context)
     }
-//
-//    @PostMapping(value = "/context", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-//    Mono<String> createContext(@RequestPart("context") FilePart context) {
-//        return context.contentAsString.flatMap(redisTemplate.opsForValue()::set)
-//    }
+
+    @PostMapping(value = "/context/file", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    Mono<String> createContext(@RequestPart("context") FilePart context) {
+        return context.contentAsString.flatMap(redisTemplate.opsForValue()::set)
+    }
 
     @PutMapping("/context/{key}")
     void putContext(@PathVariable String key, @RequestBody String context) {
