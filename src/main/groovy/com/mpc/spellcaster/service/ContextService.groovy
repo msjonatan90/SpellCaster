@@ -1,8 +1,16 @@
 package com.mpc.spellcaster.service
 
-import com.mpc.spellcaster.model.Context
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.mpc.spellcaster.api.RedisStreamHandler
+import groovy.json.JsonParserType
+import groovy.json.JsonSlurper
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.data.redis.core.ReactiveRedisTemplate
+import org.springframework.expression.spel.support.StandardEvaluationContext
 import org.springframework.stereotype.Service
+import reactor.core.publisher.Flux
+import reactor.core.publisher.Mono
+
 
 import java.util.concurrent.ConcurrentHashMap
 
@@ -12,19 +20,44 @@ class ContextService {
     @Autowired
     private RedisService redisService
 
-    private Map<String, Context> cache = new ConcurrentHashMap<>()
+    @Autowired
+    private ObjectMapper objectMapper
 
-    void put(String key, Context value) {
-        redisService.saveContext(key, value)
-        cache.put(key, value)
+    @Autowired
+    private ReactiveRedisTemplate<String, String> reactiveRedisTemplate
+
+    @Autowired
+    private RedisStreamHandler redisStreamHandler
+
+    private final static JsonSlurper jsonSlurper =
+            new JsonSlurper(type: JsonParserType.CHARACTER_SOURCE, lazyChop: false, chop: false)
+
+    private final Map<String, StandardEvaluationContext> evaluationContext = new ConcurrentHashMap<>()
+
+
+    String create(Flux<String> contextStream) {
+        String contextKey = "evalContext_" + UUID.randomUUID().toString()
+        redisStreamHandler.handleStream(contextKey, contextStream, context -> {
+            // Create StandardEvaluationContext and perform necessary operations
+            evaluationContext.put(contextKey, new StandardEvaluationContext(context))
+        })
+        return contextKey
     }
 
-    Context get(String key) {
-        Context context = cache.get(key)
+
+    void update(String key, String context) {
+        Object contextMap = jsonSlurper.parseText(context)
+        redisService.saveContext(key, contextMap)
+        evaluationContext.put(key, new StandardEvaluationContext(contextMap))
+    }
+
+    StandardEvaluationContext get(String key) {
+        StandardEvaluationContext context = evaluationContext.get(key)
         if (context == null) {
-            context = redisService.getContext(key)
-            if (context != null) {
-                cache.put(key, context)
+            final Object contextMap = redisService.getContext(key)
+            if (contextMap != null) {
+                context = new StandardEvaluationContext(contextMap)
+                evaluationContext.put(key, context)
             }
         }
         return context
@@ -32,7 +65,8 @@ class ContextService {
 
     void delete(String key) {
         redisService.deleteContext(key)
-        cache.remove(key)
+        evaluationContext.remove(key)
     }
+
 
 }

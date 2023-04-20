@@ -1,5 +1,7 @@
 package com.mpc.spellcaster.error
 
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.ControllerAdvice
@@ -7,6 +9,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler
 
 @ControllerAdvice
 class SpellCasterExceptionHandler {
+
+    final static Logger logger = LoggerFactory.getLogger(SpellCasterExceptionHandler.class)
 
     @ExceptionHandler(value = Exception.class)
     ResponseEntity<String> handleException(Exception ex) {
@@ -20,7 +24,7 @@ class SpellCasterExceptionHandler {
     @ExceptionHandler(value = ContextNotFoundException.class)
     ResponseEntity<String> handleContextNotFoundException(ContextNotFoundException ex) {
         // Log the exception
-        logger.error("Context not found: ", ex);
+        logger.error("Context not found: ", ex)
 
         // Return an error response to the client
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Context not found: " + ex.getMessage());

@@ -1,9 +1,9 @@
 package com.mpc.spellcaster.service
 
-import com.mpc.spellcaster.model.Context
+
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.expression.Expression
 import org.springframework.expression.spel.standard.SpelExpressionParser
+import org.springframework.expression.spel.support.StandardEvaluationContext
 import org.springframework.stereotype.Service
 
 @Service
@@ -12,10 +12,10 @@ class SpellCasterService {
     @Autowired
     ContextService contextService
 
-    static Object evaluate(String expression, Context context) {
-        final SpelExpressionParser parser = new SpelExpressionParser()
-        final Expression exp = parser.parseExpression(expression)
-        return exp.getValue(context)
+    static final SpelExpressionParser eval = new SpelExpressionParser()
+
+    static Object evaluate(String expression, StandardEvaluationContext context) {
+        return eval.parseExpression(expression).getValue(context)
     }
 
     static boolean validate(String expression) {
