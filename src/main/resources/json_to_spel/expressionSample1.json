@@ -1,0 +1,14 @@
+{
+  "type": "Number",
+  "operator": "Add",
+  "args": [
+    {
+      "type": "Number",
+      "value": 5
+    },
+    {
+      "type": "String",
+      "value": "foo"
+    }
+  ]
+}

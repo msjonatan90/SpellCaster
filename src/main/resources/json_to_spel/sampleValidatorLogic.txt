@@ -1,0 +1,130 @@
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.JsonNode;
+
+public class JsonTypeValidator {
+
+    public static boolean validateExpression(String expression) throws Exception {
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode rootNode = mapper.readTree(expression);
+
+        return validateNode(rootNode);
+    }
+
+    private static boolean validateNode(JsonNode node) {
+        String type = node.get("type").asText();
+
+        if (type.equals("function")) {
+            String functionName = node.get("name").asText();
+            JsonNode argsNode = node.get("args");
+            Iterator<JsonNode> it = argsNode.elements();
+
+            while (it.hasNext()) {
+                JsonNode argNode = it.next();
+
+                if (!validateNode(argNode)) {
+                    return false;
+                }
+            }
+
+            // Check function argument types
+            if (functionName.equals("multiply")) {
+                JsonNode arg1 = argsNode.get(0);
+                JsonNode arg2 = argsNode.get(1);
+                String arg1Type = arg1.get("type").asText();
+                String arg2Type = arg2.get("type").asText();
+
+                if (!arg1Type.equals("number") || !arg2Type.equals("number")) {
+                    return false;
+                }
+            }
+
+            // Check other function argument types...
+
+            return true;
+        }
+        else if (type.equals("number")) {
+            return true;
+        }
+        else if (type.equals("text")) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+}
+
+
+Yes, it is possible to implement a type validator for the JSON expression in SpellCaster.
+
+One way to implement this is to define a schema for the JSON expression that specifies the allowed types for each operator or function. The schema can be defined using a schema language like JSON Schema or YAML.
+
+The schema can then be used to validate the JSON expression before it is parsed into a SpEL expression. If the JSON expression does not conform to the schema, an error can be raised.
+
+For example, suppose we have the following JSON expression:
+
+json
+Copy code
+{
+  "type": "Number",
+  "operator": "Add",
+  "args": [
+    {
+      "type": "Number",
+      "value": 5
+    },
+    {
+      "type": "String",
+      "value": "foo"
+    }
+  ]
+}
+We can define a JSON Schema that specifies that the "Add" operator can only take arguments of type "Number":
+
+json
+Copy code
+{
+  "type": "object",
+  "properties": {
+    "type": { "type": "string" },
+    "operator": { "type": "string" },
+    "args": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "type": { "type": "string" },
+          "value": {
+            "anyOf": [
+              { "type": "number" },
+              { "type": "string" },
+              { "type": "boolean" }
+            ]
+          }
+        },
+        "required": ["type", "value"]
+      }
+    }
+  },
+  "required": ["type", "operator", "args"],
+  "additionalProperties": false,
+  "dependencies": {
+    "operator": {
+      "oneOf": [
+        {
+          "properties": {
+            "operator": { "const": "Add" },
+            "args": {
+              "items": {
+                "properties": {
+                  "type": { "const": "Number" }
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}
+We can then use a JSON Schema validation library to validate the JSON expression against the schema before parsing it into a SpEL expression. If the validation fails, an error can be raised.

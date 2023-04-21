@@ -5,9 +5,10 @@ import com.mpc.spellcaster.service.ContextService
 import com.mpc.spellcaster.service.SpellCasterService
 import groovy.json.JsonOutput
 import org.springframework.expression.EvaluationContext
-import org.springframework.http.MediaType
 import org.springframework.http.codec.multipart.FilePart
 import org.springframework.web.bind.annotation.*
+
+import static org.springframework.http.MediaType.*
 
 @RestController
 class SpellCasterController {
@@ -43,7 +44,7 @@ class SpellCasterController {
      * @param contextFile
      * @return
      */
-    @PostMapping(value = "/context/{appName}/file", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(value = "/context/{appName}/file", consumes = MULTIPART_FORM_DATA_VALUE)
     String createContext(@PathVariable String appName, @RequestPart("context") FilePart contextFile) {
         try {
             String contextKey = UUID.randomUUID().toString()
@@ -96,7 +97,7 @@ class SpellCasterController {
      * @param expression
      * @return
      */
-    @PostMapping("/context/{appName}/{key}/eval")
+    @PostMapping( value = "/context/{appName}/{key}/eval", consumes = TEXT_PLAIN_VALUE)
     Object evaluateExpression(@PathVariable String appName, @PathVariable String key, @RequestBody String expression) {
         // Evaluate the SpEL expression using the context object
         return JsonOutput.prettyPrint(JsonOutput.toJson(
@@ -109,8 +110,41 @@ class SpellCasterController {
      * @param expression
      * @return
      */
-    @PostMapping("/expression/validate")
+    @PostMapping(value = "/expression/validate", consumes = TEXT_PLAIN_VALUE)
     boolean validateExpression(@RequestBody String expression) {
+        // Validates the SpEL expression using the context object
+        return spellCaster.validate(expression) //TODO not working
+    }
+
+    /**
+     * Evaluate the SpEL expression using the context object
+     * @param appName
+     * @param key
+     * @param expression
+     * @return
+     */
+    @PostMapping(value = "/context/{appName}/{key}/eval", consumes = APPLICATION_JSON_VALUE)
+    Object evaluateJSONExpression(@PathVariable String appName, @PathVariable String key, @RequestBody String jsonExpression) {
+
+        //TODO implement module for parsing JSON expression into SpEL expression considering all the chucks of ideas, proposals, requirement and details for this module at the folder src/main/resources/json_to_spel
+
+        //TODO validate the JSON expression using the module
+
+        //TODO parse the JSON expression into SpEL Expression using the module
+
+        // Evaluate the SpEL expression using the context object
+        return JsonOutput.prettyPrint(JsonOutput.toJson(
+                //evaluate the expression and return the result
+                spellCaster.evaluate(appName, key, jsonExpression)?.toString()))
+    }
+
+    /**
+     * Validates the SpEL expression using the context object
+     * @param expression
+     * @return
+     */
+    @PostMapping(value = "/expression/validate", consumes = APPLICATION_JSON_VALUE)
+    boolean validateJSONExpression(@RequestBody String expression) {
         // Validates the SpEL expression using the context object
         return spellCaster.validate(expression) //TODO not working
     }

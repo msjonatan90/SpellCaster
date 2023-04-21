@@ -1,0 +1,24 @@
+Here's an example of how the JSON representation of a SpEL from SpellCaster might look like, including a "type" for each operator or function to represent the return type:
+
+json
+Copy code
+{
+  "type": "number",
+  "function": {
+    "name": "multiply",
+    "arguments": [
+      {
+        "type": "number",
+        "value": "2"
+      },
+      {
+        "type": "number",
+        "value": "3"
+      }
+    ]
+  },
+  "operator": null
+}
+In this example, the SpEL expression represents a call to the "multiply" function with arguments "2" and "3". The "type" attribute specifies that the result of the expression will be a "number". If the arguments were strings, for example, the "type" attribute for the function call would be set to "string".
+
+Note that in this example, there is no operator specified. If there were an operator included, such as the addition operator, the "type" attribute would be set based on the data types of the operands.
