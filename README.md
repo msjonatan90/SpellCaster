@@ -19,4 +19,12 @@ The solution also includes a Swagger API documentation, which provides a clear a
 
 Overall, SpellCaster provides a powerful tool for developers and business analysts to define and execute complex business logic using a flexible and intuitive language.
 
+Tech Stack: 
+- Groovy/Spring
+- Spring WebFlux
+- Spring Redis Data
+- Redis/RedisGraph/RedisHash/RedisStream/RedisPubSub
+- SpEL Expressions
+- Blockly expressions.
+- JUnit/Mockito
 
