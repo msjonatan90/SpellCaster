@@ -13,8 +13,8 @@ class RedisService {
         this.redisTemplate = redisTemplate
     }
 
-    String saveContext(String appName, String contextKey, Object contextPayload) {
-        return redisTemplate.opsForHash().put(appName, contextKey, contextPayload)
+    void saveContext(String appName, String contextKey, Object contextPayload) {
+        redisTemplate.opsForHash().put(appName, contextKey, contextPayload)
     }
 
     Object getContext(String appName, String contextKey) {
@@ -24,7 +24,9 @@ class RedisService {
         }
         return context
     }
+
     void deleteContext(String appName, String key) {
         redisTemplate.opsForHash().delete(appName, key)
     }
+
 }

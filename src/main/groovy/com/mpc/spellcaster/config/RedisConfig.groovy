@@ -1,6 +1,6 @@
 package com.mpc.spellcaster.config
 
-import org.springframework.beans.factory.annotation.Autowired
+
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.data.redis.connection.RedisConnectionFactory
@@ -33,33 +33,17 @@ class RedisConfig {
         template.setConnectionFactory(redisConnectionFactory)
         template.setKeySerializer(new StringRedisSerializer())
         template.setValueSerializer(new GenericJackson2JsonRedisSerializer())
+        template.setHashKeySerializer(new StringRedisSerializer())
+        template.setHashValueSerializer(new GenericJackson2JsonRedisSerializer())
         template.afterPropertiesSet()
         return template
     }
-//
-//    @Bean
-//    RedisTemplate<String, Object> pubSubRedisTemplate(RedisConnectionFactory redisConnectionFactory) {
-//        RedisTemplate<String, Object> template = new RedisTemplate<String, Object>()
-//        template.setConnectionFactory(redisConnectionFactory)
-//        template.setDefaultSerializer(new StringRedisSerializer())
-//        template.setKeySerializer(new StringRedisSerializer())
-//        template.setValueSerializer(new StringRedisSerializer())
-//        template.afterPropertiesSet()
-//        return template
-//    }
 
     @Bean
     RedisMessageListenerContainer redisContainer(RedisConnectionFactory connectionFactory){
 
         RedisMessageListenerContainer container = new RedisMessageListenerContainer()
         container.setConnectionFactory(connectionFactory)
-//        container.addMessageListener(listenerAdapter,
-//                new ChannelTopic(redisProperties.redisMessageTopic))
         return container
     }
-//
-//    @Bean
-//    MessageListenerAdapter listenerAdapter(RedisTemplate<String, Object> redisTemplate) {
-//        return new MessageListenerAdapter(new ContextSubscriber(redisTemplate))
-//    }
 }
