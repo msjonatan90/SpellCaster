@@ -22,7 +22,7 @@ class ContextUploadService {
     void uploadContext(String appName, String contextKey, FilePart contextFile) {
 
         try {
-            //TODO: stream the file contents to Redis instead of reading the entire file into memory
+            //stream the file contents to Redis instead of reading the entire file into memory
             contextFile.content()?.subscribe(dataBuffer -> {
                 final byte[] bytes = new byte[dataBuffer.readableByteCount()]
                 dataBuffer.read(bytes)
@@ -33,7 +33,7 @@ class ContextUploadService {
                         contextKey: contextKey,
                         contextPayload: contextObject
                 )
-                //TODO: stream the file contents to Redis instead of reading the entire file into memory
+                //stream the file contents to Redis instead of reading the entire file into memory
                 //save the context to Redis
                 redisService.saveContext(appName, contextKey, contextObject)
                 //update the EvaluationContext for the context in the cache

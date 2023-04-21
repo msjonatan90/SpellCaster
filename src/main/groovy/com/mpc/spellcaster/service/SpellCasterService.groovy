@@ -19,15 +19,16 @@ class SpellCasterService {
         EvaluationContext evaluationContext = contextService.get(appName, contextKey)
         final Object result = eval.parseExpression(expression)
                 .getValue(evaluationContext)
-        //TODO since the eval could have modified the context, we need to save it back to Redis
+        //TODO since the eval.parseExpression could have modified the context, we need to save it back to Redis using the Redis Service
+
+
         return result
     }
 
     //TODO this isn't working
     static boolean validate(String expression) {
-        // Validates the SpEL expression using the context object
-        final SpelExpressionParser parser = new SpelExpressionParser()
-        return parser.parseRaw(expression).compileExpression()
+        //TODO Validates the integrity and format of the SpEL expression
+        return false //TODO return the result of the validation
     }
 
 }

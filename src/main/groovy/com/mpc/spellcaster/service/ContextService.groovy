@@ -32,13 +32,13 @@ class ContextService {
         String contextKey = UUID.randomUUID().toString()
 
         def context = new Context() //TODO use Context object instead and figure out how to dynamically add properties to it
-        contextObject.each { k, v -> context."$k" = v } //TODO was supposed to be a hack to dynamically add properties to the Context object, but fails Property or field 'field1' cannot be found on object of type 'com.mpc.spellcaster.model.Context'
+        contextObject.each { k, v -> context."$k" = v } //TODO was supposed to be a hack to dynamically add properties to the Context object, but fails Property or field 'field1' cannot be found on object of type 'com.mpc.spellcaster.model.Context', Although this needs to be changed to affect the child nodes recursively
 
         //Save the context to Redis
-        redisService.saveContext(appName, contextKey, contextObject) //TODO use Context object instead
+        redisService.saveContext(appName, contextKey, contextObject)
 
         // Create a new EvaluationContext for the context and add it to the cache
-        evaluationContext.put(contextKey, new SpellCasterContext(contextObject)) //TODO use Context object instead
+        evaluationContext.put(contextKey, new SpellCasterContext(contextObject))
 
         // Return the contextKey
         return contextKey

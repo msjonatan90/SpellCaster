@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service
 @Service
 class RedisService {
 
-    private final RedisTemplate<String, Object> redisTemplate //TODO use reactive Redis instead
+    private final RedisTemplate<String, Object> redisTemplate //use reactive Redis instead
 
     RedisService(RedisTemplate<String, Object> redisTemplate) {
         this.redisTemplate = redisTemplate

@@ -126,16 +126,17 @@ class SpellCasterController {
     @PostMapping(value = "/context/{appName}/{key}/eval", consumes = APPLICATION_JSON_VALUE)
     Object evaluateJSONExpression(@PathVariable String appName, @PathVariable String key, @RequestBody String jsonExpression) {
 
-        //TODO implement module for parsing JSON expression into SpEL expression considering all the chucks of ideas, proposals, requirement and details for this module at the folder src/main/resources/json_to_spel
+        //TODO implement new class for parsing JSON expression into SpEL expression considering all the chucks of ideas, proposals, requirement and details for this module at the folder src/main/resources/json_to_spel
 
-        //TODO validate the JSON expression using the module
+        //TODO validate the JSON expression using that new class
 
         //TODO parse the JSON expression into SpEL Expression using the module
 
-        // Evaluate the SpEL expression using the context object
-        return JsonOutput.prettyPrint(JsonOutput.toJson(
-                //evaluate the expression and return the result
-                spellCaster.evaluate(appName, key, jsonExpression)?.toString()))
+        //TODO evaluate the SpEL expression using the context object
+
+        //TODO return the result of the evaluation as a JSON string
+
+        return null
     }
 
     /**
@@ -144,8 +145,8 @@ class SpellCasterController {
      * @return
      */
     @PostMapping(value = "/expression/validate", consumes = APPLICATION_JSON_VALUE)
-    boolean validateJSONExpression(@RequestBody String expression) {
-        // Validates the SpEL expression using the context object
-        return spellCaster.validate(expression) //TODO not working
+    boolean validateJSONExpression(@RequestBody String jsonExpression) {
+        //TODO validate the JSON expression. Similar to evaluateJSONExpression, but without evaluating, just validating
+        return false //TODO return the result of the validation
     }
 }
