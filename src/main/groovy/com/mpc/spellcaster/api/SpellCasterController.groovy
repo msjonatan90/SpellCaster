@@ -126,21 +126,12 @@ class SpellCasterController {
      */
     @PostMapping(value = "/context/{appName}/{key}/evalJson", consumes = APPLICATION_JSON_VALUE)
     Object evaluateJSONExpression(@PathVariable String appName, @PathVariable String key, @RequestBody String jsonExpression) {
-
-        //TODO implement new class for parsing JSON expression into SpEL expression considering all the chucks of ideas, proposals, requirement and details for this module at the folder src/main/resources/json_to_spel
-
+        //parse the JSON expression into SpEL expression
         String SpELExpression = new SpelExpressionParser().parseJsonToSpel(jsonExpression)
 
         //TODO validate the JSON expression using that new class
 
-        //TODO parse the JSON expression into SpEL Expression using the module
-
-
-
-        //TODO evaluate the SpEL expression using the context object
-
-        //TODO return the result of the evaluation as a JSON string
-
+        //evaluate the expression and return the result
         return evaluateExpression(appName, key, SpELExpression)
     }
 
