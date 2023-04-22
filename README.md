@@ -1,125 +1,93 @@
+
 # SpellCaster
-# SpellCaster
 
-SpellCaster is a web service that allows you to evaluate SpEL (Spring Expression Language) expressions against JSON objects. The service is built using Spring Boot and provides a RESTful API to interact with the SpEL engine.
+SpellCaster is a service for evaluating expressions against JSON objects using Spring Expression Language (SpEL).
 
-## Endpoints
+## API Endpoints
 
-### `POST /api/v1/evaluate`
+### POST /context/{appName}
+Create a new context for the given appName using the provided JSON object.
 
-This endpoint allows you to evaluate a SpEL expression against a JSON object.
+**Request Parameters:**
+- appName (path): Name of the application
+- context (body): JSON object to be used as context
 
-#### Request Body
+**Response:**
+- 200 OK: Returns a string representation of the context
 
-The request body should be a JSON object containing the following properties:
+### POST /context/{appName}/file
+Create a new context for the given appName using the provided file.
 
-- `expression`: A SpEL expression to be evaluated.
-- `context`: A JSON object against which the SpEL expression should be evaluated.
+**Request Parameters:**
+- appName (path): Name of the application
+- context (formData): File containing the context
 
-#### Response
+**Response:**
+- 200 OK: Returns a string representation of the context
 
-The response is a JSON object containing the following properties:
+### GET /context/{appName}/{key}
+Retrieve the context value for the given appName and key.
 
-- `result`: The result of the SpEL expression evaluation.
-- `success`: A boolean value indicating whether the evaluation was successful.
+**Request Parameters:**
+- appName (path): Name of the application
+- key (path): Key for the value in the context
 
-#### Example
+**Response:**
+- 200 OK: Returns the value associated with the key
 
-Request:
+### PUT /context/{appName}/{key}
+Update the context value for the given appName and key.
 
-```json
-{
-  "expression": "#root.actors.?[birthYear < 1980].name",
-  "context": {
-    "title": "Inception",
-    "year": 2010,
-    "director": {
-      "name": "Christopher Nolan",
-      "birthYear": 1970
-    },
-    "actors": [
-      {
-        "id": 1,
-        "name": "Leonardo DiCaprio",
-        "birthYear": 1974
-      },
-      {
-        "id": 2,
-        "name": "Joseph Gordon-Levitt",
-        "birthYear": 1981
-      },
-      {
-        "id": 3,
-        "name": "Ellen Page",
-        "birthYear": 1987
-      }
-    ],
-    "genres": [
-      "Action",
-      "Sci-Fi",
-      "Thriller"
-    ]
-  }
-}
-```
+**Request Parameters:**
+- appName (path): Name of the application
+- context (body): JSON object to be used as context
+- key (path): Key for the value in the context
 
-Response:
+**Response:**
+- 200 OK
 
-```json
+### DELETE /context/{appName}/{key}
+Delete the context value for the given appName and key.
 
-{
-  "result": [
-    "Leonardo DiCaprio"
-  ],
-  "success": true
-}
-```
+**Request Parameters:**
+- appName (path): Name of the application
+- key (path): Key for the value in the context
 
-GET `/api/v1/contexts/{contextId}`
-This endpoint allows you to retrieve a stored JSON context object by its ID.
+**Response:**
+- 200 OK
 
-Path Parameters
-contextId: The ID of the stored JSON context object.
-Response
-The response is a JSON object containing the stored JSON context object.
+### POST /context/{appName}/{key}/eval
+Evaluate a SpEL expression against the context associated with the given appName and key.
 
-Example
-Request: GET `/api/v1/contexts/1`
+**Request Parameters:**
+- appName (path): Name of the application
+- expression (body): SpEL expression to be evaluated
+- key (path): Key for the value in the context
 
-Response:
+**Response:**
+- 200 OK: Returns the result of the evaluated expression
 
-```json
-{
-  "title": "Inception",
-  "year": 2010,
-  "director": {
-    "name": "Christopher Nolan",
-    "birthYear": 1970
-  },
-  "actors": [
-    {
-      "id": 1,
-      "name": "Leonardo DiCaprio",
-      "birthYear": 1974
-    },
-    {
-      "id": 2,
-      "name": "Joseph Gordon-Levitt",
-      "birthYear": 1981
-    },
-    {
-      "id": 3,
-      "name": "Ellen Page",
-      "birthYear": 1987
-    }
-  ],
-  "genres": [
-    "Action",
-    "Sci-Fi",
-    "Thriller"
-  ]
-}
-```
+### POST /context/{appName}/{key}/evalJson
+Evaluate a JSON Expression against the context associated with the given appName and key.
+
+**Request Parameters:**
+- appName (path): Name of the application
+- jsonExpression (body): JSON Expression to be evaluated
+- key (path): Key for the value in the context
+
+**Response:**
+- 200 OK: Returns the result of the evaluated JSON Expression
+
+### POST /expression/validate
+Validate a JSON Expression.
+
+**Request Parameters:**
+- jsonExpression (body): JSON Expression to be validated
+
+**Response:**
+- 200 OK: Returns a boolean value indicating whether the JSON Expression is valid or not
+
+
 Getting Started
 To run the SpellCaster service, you can use the following command:
 
