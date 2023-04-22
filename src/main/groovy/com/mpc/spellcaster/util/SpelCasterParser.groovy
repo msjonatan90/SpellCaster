@@ -2,7 +2,7 @@ package com.mpc.spellcaster.util
 
 import groovy.json.JsonSlurper
 
-class SpelExpressionParser {
+class SpelCasterParser {
 
     String parseJsonToSpel(String jsonExpression) {
         def jsonSlurper = new JsonSlurper() as Object

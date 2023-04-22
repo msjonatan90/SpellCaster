@@ -1,7 +1,13 @@
 package com.mpc.spellcaster.service
 
 import com.mpc.spellcaster.error.ContextNotFoundException
+import org.springframework.dao.DataAccessException
+import org.springframework.data.redis.connection.RedisConnection
+import org.springframework.data.redis.connection.RedisScriptingCommands
+import org.springframework.data.redis.connection.ReturnType
+import org.springframework.data.redis.core.RedisCallback
 import org.springframework.data.redis.core.RedisTemplate
+import org.springframework.expression.spel.standard.SpelExpressionParser
 import org.springframework.stereotype.Service
 
 @Service
@@ -32,4 +38,22 @@ class RedisService {
         redisTemplate.opsForHash().delete(appName, key)
     }
 
+    def findByExpression(String appName, String contextKey, String spelExpression) {
+
+        String spelExpressionAST = new SpelExpressionParser().parseRaw(spelExpression).toStringAST()
+                .replaceAll("'","\\\\'")
+
+        String script = "local context = redis.call('HGET', '${appName}', '${contextKey}');\n" +
+                "return redis.call('EVAL', '${spelExpressionAST}', 0, context)"
+
+        print(script)
+
+        return redisTemplate.execute(new RedisCallback<List<Object>>() {
+            @Override
+            List<Object> doInRedis(RedisConnection connection) throws DataAccessException {
+                RedisScriptingCommands scriptingCommands = connection.scriptingCommands()
+                return scriptingCommands.eval(script.getBytes(), ReturnType.MULTI, 0)
+            }
+        })
+    }
 }

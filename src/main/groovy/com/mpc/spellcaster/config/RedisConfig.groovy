@@ -22,9 +22,11 @@ class RedisConfig {
 
     @Bean
     RedisConnectionFactory redisConnectionFactory() {
-        return new JedisConnectionFactory(new RedisStandaloneConfiguration(
+        final RedisStandaloneConfiguration redisStandaloneConfiguration = new RedisStandaloneConfiguration(
                 redisProperties.redisHost, redisProperties.redisPort
-        ))
+        )
+        redisStandaloneConfiguration.setL
+        return new JedisConnectionFactory(redisStandaloneConfiguration)
     }
 
     @Bean

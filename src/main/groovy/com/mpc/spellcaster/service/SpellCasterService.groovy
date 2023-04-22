@@ -10,9 +10,11 @@ class SpellCasterService {
     static final SpelExpressionParser eval = new SpelExpressionParser()
 
     private final ContextService contextService
+    private final RedisService redisService
 
-    SpellCasterService(ContextService contextService) {
+    SpellCasterService(ContextService contextService, RedisService redisService) {
         this.contextService = contextService
+        this.redisService = redisService
     }
 
     Object evaluate(String appName, String contextKey, String expression) {
@@ -21,8 +23,11 @@ class SpellCasterService {
                 .getValue(evaluationContext)
         //TODO since the eval.parseExpression could have modified the context, we need to save it back to Redis using the Redis Service
 
-
         return result
+    }
+
+    Object evaluateOnRedis(String appName, String contextKey, String expression){
+        return redisService.findByExpression(appName, contextKey, expression)
     }
 
     //TODO this isn't working

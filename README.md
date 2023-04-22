@@ -105,25 +105,57 @@ SpEL (Spring Expression Language) is a powerful expression language that support
 
 JSON Expression is a custom format for representing SpEL expressions as JSON objects. This format allows for easy manipulation of expressions in different contexts, such as user interfaces or programmatic interfaces.
 
-**Example:**
+The JSON Expression schema represents SpEL expressions as a tree-like structure, making it easier to work with and manipulate programmatically. Here's an example of how a JSON Expression schema might look like:
+
 ```json
 {
-  "type": "Comparison",
-  "operator": "==",
-  "left": {
-    "type": "PropertyAccess",
-    "target": {
-      "type": "Variable",
-      "value": "root"
+  "type": "Expression",
+  "root": {
+    "type": "BinaryOperation",
+    "operator": "+",
+    "left": {
+      "type": "VariableReference",
+      "name": "a"
     },
-    "property": "movie.title"
-  },
-  "right": {
-    "type": "Literal",
-    "value": "Inception"
+    "right": {
+      "type": "MethodCall",
+      "name": "multiply",
+      "arguments": [
+        {
+          "type": "VariableReference",
+          "name": "b"
+        },
+        {
+          "type": "Literal",
+          "value": 2,
+          "dataType": "Integer"
+        }
+      ]
+    }
   }
 }
 ```
+In this example, the JSON Expression schema represents the SpEL expression a + multiply(b, 2). The schema has a hierarchical structure, with each node representing an expression element (e.g., variable, literal, method call, or operation). The "type" field indicates the element's type, while other fields store relevant information for that element.
+
+Here's a brief overview of the possible node types and their fields:
+
+- Expression: The root node representing the entire expression.
+"root": Contains the root element of the expression (e.g., a BinaryOperation, VariableReference, or MethodCall).
+- BinaryOperation: Represents a binary operation (e.g., addition, subtraction, multiplication, or division).
+"operator": The binary operator (e.g., +, -, *, /).
+"left" and "right": The left and right operands of the operation, which can be any expression element.
+- VariableReference: Represents a reference to a variable in the JSON context.
+"name": The name of the variable.
+- Literal: Represents a literal value (e.g., a number, string, or boolean).
+"value": The literal value.
+"dataType": The data type of the literal (e.g., "Integer", "Double", "String", "Boolean").
+- MethodCall: Represents a method call with zero or more arguments.
+"name": The name of the method.
+"arguments": An array of expression elements representing the method's arguments.
+
+This JSON Expression schema provides a flexible and easily understandable representation of SpEL expressions, which can be used for programmatic manipulation and evaluation within the SpELCaster service.
+
+
 
 Getting Started
 To run the SpellCaster service, you can use the following command:

@@ -3,7 +3,7 @@ package com.mpc.spellcaster.api
 import com.mpc.spellcaster.service.ContextUploadService
 import com.mpc.spellcaster.service.ContextService
 import com.mpc.spellcaster.service.SpellCasterService
-import com.mpc.spellcaster.util.SpelExpressionParser
+import com.mpc.spellcaster.util.SpelCasterParser
 import groovy.json.JsonOutput
 import org.springframework.expression.EvaluationContext
 import org.springframework.http.codec.multipart.FilePart
@@ -106,6 +106,14 @@ class SpellCasterController {
                 spellCaster.evaluate(appName, key, expression)?.toString()))
     }
 
+    @PostMapping( value = "/context/redis/{appName}/{key}/eval", consumes = TEXT_PLAIN_VALUE)
+    Object evaluateExpressionOnRedis(@PathVariable String appName, @PathVariable String key, @RequestBody String expression) {
+        // Evaluate the SpEL expression using the context object
+        return JsonOutput.prettyPrint(JsonOutput.toJson(
+                //evaluate the expression and return the result
+                spellCaster.evaluateOnRedis(appName, key, expression)?.toString()))
+    }
+
     /**
      * Validates the SpEL expression using the context object
      * @param expression
@@ -127,7 +135,7 @@ class SpellCasterController {
     @PostMapping(value = "/context/{appName}/{key}/evalJson", consumes = APPLICATION_JSON_VALUE)
     Object evaluateJSONExpression(@PathVariable String appName, @PathVariable String key, @RequestBody String jsonExpression) {
         //parse the JSON expression into SpEL expression
-        String SpELExpression = new SpelExpressionParser().parseJsonToSpel(jsonExpression)
+        String SpELExpression = new SpelCasterParser().parseJsonToSpel(jsonExpression)
 
         //TODO validate the JSON expression using that new class
 
