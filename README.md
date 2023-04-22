@@ -1,30 +1,129 @@
 # SpellCaster
+# SpellCaster
 
+SpellCaster is a web service that allows you to evaluate SpEL (Spring Expression Language) expressions against JSON objects. The service is built using Spring Boot and provides a RESTful API to interact with the SpEL engine.
 
-SpellCaster is a web application that allows users to define and execute business logic using SpEL (Spring Expression Language) expressions.
+## Endpoints
 
-The technical requirements for SpellCaster include the use of Java Spring Framework and the React JavaScript library for the user interface. The application should be able to receive input from the user in the form of JSON objects and use SpEL expressions to perform actions based on that input. The output should also be in the form of JSON objects.
+### `POST /api/v1/evaluate`
 
-The functional requirements for SpellCaster include the ability for users to define and save SpEL expressions and to execute them on demand. The application should support a variety of SpEL expression types, including literals, variables, method calls, and operators. Users should also be able to define custom functions in SpEL to extend the functionality of the application.
+This endpoint allows you to evaluate a SpEL expression against a JSON object.
 
-In addition to the core functionality, SpellCaster should also have the ability to stream input directly into Redis using a UUID generated key, and should be able to filter and manipulate JSON objects using SpEL expressions.
+#### Request Body
 
-The proposed solution for SpellCaster is a web application that allows users to define and execute business logic using SpEL expressions. The solution uses Java Spring Framework for the backend and React JavaScript library for the frontend.
+The request body should be a JSON object containing the following properties:
 
-Users can define SpEL expressions in a custom JSON expression model and execute them on demand. The application supports a variety of SpEL expression types, including literals, variables, method calls, and operators. Users can also define custom functions in SpEL to extend the functionality of the application.
+- `expression`: A SpEL expression to be evaluated.
+- `context`: A JSON object against which the SpEL expression should be evaluated.
 
-The solution includes the ability to stream input directly into Redis using a UUID generated key, and allows for filtering and manipulation of JSON objects using SpEL expressions.
+#### Response
 
-The solution also includes a Swagger API documentation, which provides a clear and user-friendly way for developers to understand the endpoints and functionality of the application. The application is deployed using Docker and can be easily scaled horizontally to handle large amounts of traffic.
+The response is a JSON object containing the following properties:
 
-Overall, SpellCaster provides a powerful tool for developers and business analysts to define and execute complex business logic using a flexible and intuitive language.
+- `result`: The result of the SpEL expression evaluation.
+- `success`: A boolean value indicating whether the evaluation was successful.
 
-Tech Stack: 
-- Groovy/Spring
-- Spring WebFlux
-- Spring Redis Data
-- Redis/RedisGraph/RedisHash/RedisStream/RedisPubSub
-- SpEL Expressions
-- Blockly expressions.
-- JUnit/Mockito
+#### Example
 
+Request:
+
+```json
+{
+  "expression": "#root.actors.?[birthYear < 1980].name",
+  "context": {
+    "title": "Inception",
+    "year": 2010,
+    "director": {
+      "name": "Christopher Nolan",
+      "birthYear": 1970
+    },
+    "actors": [
+      {
+        "id": 1,
+        "name": "Leonardo DiCaprio",
+        "birthYear": 1974
+      },
+      {
+        "id": 2,
+        "name": "Joseph Gordon-Levitt",
+        "birthYear": 1981
+      },
+      {
+        "id": 3,
+        "name": "Ellen Page",
+        "birthYear": 1987
+      }
+    ],
+    "genres": [
+      "Action",
+      "Sci-Fi",
+      "Thriller"
+    ]
+  }
+}
+```
+
+Response:
+
+```json
+
+{
+  "result": [
+    "Leonardo DiCaprio"
+  ],
+  "success": true
+}
+```
+
+GET `/api/v1/contexts/{contextId}`
+This endpoint allows you to retrieve a stored JSON context object by its ID.
+
+Path Parameters
+contextId: The ID of the stored JSON context object.
+Response
+The response is a JSON object containing the stored JSON context object.
+
+Example
+Request: GET `/api/v1/contexts/1`
+
+Response:
+
+```json
+{
+  "title": "Inception",
+  "year": 2010,
+  "director": {
+    "name": "Christopher Nolan",
+    "birthYear": 1970
+  },
+  "actors": [
+    {
+      "id": 1,
+      "name": "Leonardo DiCaprio",
+      "birthYear": 1974
+    },
+    {
+      "id": 2,
+      "name": "Joseph Gordon-Levitt",
+      "birthYear": 1981
+    },
+    {
+      "id": 3,
+      "name": "Ellen Page",
+      "birthYear": 1987
+    }
+  ],
+  "genres": [
+    "Action",
+    "Sci-Fi",
+    "Thriller"
+  ]
+}
+```
+Getting Started
+To run the SpellCaster service, you can use the following command:
+
+```bash
+./mvnw spring-boot:run
+```
+This will start the Spring Boot application on the default port 8080. You can then use a tool like Postman or curl to interact with the RESTful API.

@@ -121,7 +121,7 @@ class SpellCasterController {
      * Evaluate the SpEL expression using the context object
      * @param appName
      * @param key
-     * @param expression
+     * @param jsonExpression
      * @return
      */
     @PostMapping(value = "/context/{appName}/{key}/evalJson", consumes = APPLICATION_JSON_VALUE)
