@@ -1034,3 +1034,11 @@ Caching: The service caches dependent values and field results for improved perf
 Error Handling: The service handles errors and exceptions that may occur during expression evaluation. It provides informative error messages to users and allows them to correct the issues.
 
 Overall, the SpellCaster service provides a powerful and flexible platform for evaluating SpEL expressions against JSON objects. Its features, including custom JSON expression model, field management, state management, and dependency graph, make it suitable for handling complex dependencies and large-scale data manipulation tasks.
+
+
+
+
+
+Jonatan Mora
+change back to gpt 4
+I'm sorry, but GPT-4 does not exist yet. The latest version of the OpenAI's GPT (Generative Pre-trained Transformer) series is GPT-3. It's a language model that can generate human-like text based on a given prompt or context.
