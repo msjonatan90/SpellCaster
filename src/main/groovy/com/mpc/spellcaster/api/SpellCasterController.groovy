@@ -3,6 +3,7 @@ package com.mpc.spellcaster.api
 import com.mpc.spellcaster.service.ContextUploadService
 import com.mpc.spellcaster.service.ContextService
 import com.mpc.spellcaster.service.SpellCasterService
+import com.mpc.spellcaster.util.SpelExpressionParser
 import groovy.json.JsonOutput
 import org.springframework.expression.EvaluationContext
 import org.springframework.http.codec.multipart.FilePart
@@ -123,20 +124,24 @@ class SpellCasterController {
      * @param expression
      * @return
      */
-    @PostMapping(value = "/context/{appName}/{key}/eval", consumes = APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/context/{appName}/{key}/evalJson", consumes = APPLICATION_JSON_VALUE)
     Object evaluateJSONExpression(@PathVariable String appName, @PathVariable String key, @RequestBody String jsonExpression) {
 
         //TODO implement new class for parsing JSON expression into SpEL expression considering all the chucks of ideas, proposals, requirement and details for this module at the folder src/main/resources/json_to_spel
+
+        String SpELExpression = new SpelExpressionParser().parseJsonToSpel(jsonExpression)
 
         //TODO validate the JSON expression using that new class
 
         //TODO parse the JSON expression into SpEL Expression using the module
 
+
+
         //TODO evaluate the SpEL expression using the context object
 
         //TODO return the result of the evaluation as a JSON string
 
-        return null
+        return evaluateExpression(appName, key, SpELExpression)
     }
 
     /**
